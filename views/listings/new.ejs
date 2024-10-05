@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WanderLust</title>
+</head>
+<body>
+    <%- layout("layouts/boilerplate") %>
+    <br>
+    <div class="col-8 offset-2">
+        <h2>Create a new Listing</h2><br>
+    <form action="/listing" method="post" novalidate class="needs-validation">
+        <div class="mb-3">
+            <label for="title" class="form-label">Title</label>
+        <input type="text" name="listing[title]" placeholder="Add a catchy title" class="form-control" required>
+        <div class="valid-feedback">
+            Looks good!</div>
+        </div>
+        <div class="mb-3">
+            <label for="description" class="form-label">Description</label>
+            <textarea name="listing[description]" type="text" placeholder="enter description" class="form-control" required></textarea>
+            <div class="invalid-feedback">Please enter a short decription</div>
+        </div>
+        <div class="mb-3">
+            <label for="image" class="form-label">Image</label>
+            <input type="text" name="listing[image{url}]" placeholder="enter image URL/Link" class="form-control">
+            
+        </div>
+        <div class="row">
+        <div class="mb-3 col md-8">
+            <label for="price" class="form-label">Price</label>
+            <input  name="listing[price]" placeholder="2200" class="form-control" required>
+            <div class="invalid-feedback">Please enter a valid price</div>
+        </div>
+        <div class="mb-3 col md-8">
+            <label for="country" class="form-label">Country</label>
+            <input type="text" name="listing[country]" placeholder="India" class="form-control" required>
+            <div class="invalid-feedback">Country name should be valid!</div>
+        </div>
+    </div>
+        <div class="mb-3">
+            <label for="location" class="form-label">Location</label>
+            <input type="text" name="listing[location]" placeholder="Lucknow, Uttar Pradesh" class="form-control" required>
+            <div class="invalid-feedback">Location should be valid!</div>
+        </div>
+        <button class="btn btn-dark mb-3 add-btn">Add</button>
+        <br><br>
+    </form>
+    </div>
+    <script src="/JS/script.js"></script>
+</body>
+</html>
