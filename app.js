@@ -6,7 +6,9 @@ const path = require("path");
 const methodOverride= require('method-override');
 const ejsMate = require('ejs-mate');
 const wrapAsync = require("./utils/wrapAsync");
-const ExpressError = require("./utils/ExpressError")
+const ExpressError = require("./utils/ExpressError");
+const {listingSchema} = require("./schema.js");
+const review = require("./models/review.js");
 
 const mongo_url = "mongodb://127.0.0.1:27017/wanderlust";
 
@@ -54,7 +56,17 @@ app.post('/listing',
         if(!req.body.listing){
             throw new ExpressError(400, "send valid data for listing");
         }
-        const newListing=new Listing(req.body.listing)
+        const newListing=new Listing(req.body.listing);
+        if(!newListing.title){
+            throw new ExpressError(400, "Title is missing!");
+        }
+        if(!newListing.description){
+            throw new ExpressError(400, "Description is missing!");
+        };
+        if(!newListing.location){
+            throw new ExpressError(400, "Location is missing!");
+        }
+
         await newListing.save();
         res.redirect('/listing')
     })
@@ -87,6 +99,21 @@ app.delete("/listing/:id", wrapAsync(async(req,res) =>{
     res.redirect('/listing');
 })
 );
+
+//Reveiws
+//post route
+app.post("/listing/:id/reveiws", async(req,res) => {
+    let listing = await Listing.findById(req.params.id);
+    let newReview = new  review(req.body.review);
+
+    listing.reviews.push(newReview);
+
+    await review.save();
+    await listing.save();
+    console.log("new review saved");
+    res.send("new review saved");
+})
+
 // app.get('/testlisting', async (req,res) =>{
 //     let sampleListing= new Listing ({
 //         title: 'My recent Villa',
