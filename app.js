@@ -7,8 +7,8 @@ const methodOverride= require('method-override');
 const ejsMate = require('ejs-mate');
 const wrapAsync = require("./utils/wrapAsync");
 const ExpressError = require("./utils/ExpressError");
-const {listingSchema} = require("./schema.js");
-const review = require("./models/review.js");
+const {listingSchema, reviewSchema} = require("./schema.js");
+const Review = require("./models/review.js");
 
 const mongo_url = "mongodb://127.0.0.1:27017/wanderlust";
 
@@ -30,6 +30,26 @@ app.use(express.static(path.join(__dirname,"/public")));//to use css files
 app.get('/',(req,res)=>{
     res.send('Hi I am root');
 })
+
+const validateListing = (req,res,next) => {
+    let {error} = listingSchema.validate(req.body);
+    if (error) {
+        let errMsg = error.details.map((el) => el.message).join(",");
+        throw new ExpressError(400, errMsg);
+    } else {
+        next();
+    }
+};
+
+const validateReview = (req,res,next) => {
+    let {error} = reviewSchema.validate(req.body);
+    if (error) {
+        let errMsg = error.details.map((el) => el.message).join(",");
+        throw new ExpressError(400, errMsg);
+    } else {
+        next();
+    }
+};
 //index route
 app.get('/listing',wrapAsync(async (req,res)=>{
     const allListings= await Listing.find({});
@@ -52,6 +72,7 @@ app.get('/listing/:id', wrapAsync(async (req,res)=>{
 
 //create route
 app.post('/listing', 
+    validateListing,
     wrapAsync(async (req,res,next) =>{
         if(!req.body.listing){
             throw new ExpressError(400, "send valid data for listing");
@@ -68,7 +89,7 @@ app.post('/listing',
         }
 
         await newListing.save();
-        res.redirect('/listing')
+        res.redirect('/listing');
     })
 )
 
@@ -94,7 +115,7 @@ app.put("/listing/:id",wrapAsync(async(req,res) =>{
 //DELETE ROUTE
 app.delete("/listing/:id", wrapAsync(async(req,res) =>{
     let {id} = req.params;
-    let deletedListing = await Listing.findByIdAndDelete(id)
+    let deletedListing = await Listing.findByIdAndDelete(id);
     console.log(deletedListing);
     res.redirect('/listing');
 })
@@ -102,17 +123,17 @@ app.delete("/listing/:id", wrapAsync(async(req,res) =>{
 
 //Reveiws
 //post route
-app.post("/listing/:id/reveiws", async(req,res) => {
+app.post("/listing/:id/reviews", validateReview ,wrapAsync (async(req,res) => {
     let listing = await Listing.findById(req.params.id);
-    let newReview = new  review(req.body.review);
+    let newReview = new  Review(req.body.review);
 
     listing.reviews.push(newReview);
 
-    await review.save();
+    await newReview.save();
     await listing.save();
-    console.log("new review saved");
-    res.send("new review saved");
-})
+    
+    res.redirect(`/listing/${listing._id}`);
+}))
 
 // app.get('/testlisting', async (req,res) =>{
 //     let sampleListing= new Listing ({
