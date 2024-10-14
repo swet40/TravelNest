@@ -46,7 +46,7 @@ const validateReview = (req,res,next) => {
     }
 };
 
-app.use('/listings',listings);
+app.use('/listing',listings);
 
 //Reveiws
 //post review route
