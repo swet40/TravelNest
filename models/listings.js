@@ -26,5 +26,9 @@ const listingSchema = new Schema({
     ]
 })
 
+listingSchema.post("findOneAndDelete", async(listing) =>{
+    await ev
+})
+
 const Listing = mongoose.model("Listing", listingSchema);
 module.exports = Listing;
