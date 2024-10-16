@@ -37,7 +37,6 @@ router.get('/:id', wrapAsync(async (req,res)=>{
 
 //create route
 router.post('/', 
-    validateListing,
     wrapAsync(async (req,res,next) =>{
         if(!req.body.listing){
             throw new ExpressError(400, "send valid data for listing");
