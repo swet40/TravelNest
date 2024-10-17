@@ -18,7 +18,7 @@ const validateReview = (req,res,next) => {
 
 //Reveiws
 //post review route
-router.post("/", validateReview ,wrapAsync (async(req,res) => {
+router.post("/listing/:id/reviews", validateReview ,wrapAsync (async(req,res) => {
     let listing = await Listing.findById(req.params.id);
     let newReview = new  Review(req.body.review);
 
@@ -31,7 +31,7 @@ router.post("/", validateReview ,wrapAsync (async(req,res) => {
 }))
 
 //Delete review route
-router.delete("/:reviewID",
+router.delete("/listing/:id/reviews/:reviewID",
     wrapAsync(async(req,res)=>{
         let {id, reviewID} = req.params;
 
