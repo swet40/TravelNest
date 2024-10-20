@@ -19,9 +19,7 @@ const mongo_url = "mongodb://127.0.0.1:27017/wanderlust";
 
 main().then(()=>{
     console.log("connected to db");
-})
-
-.catch(err => console.log(err));
+}).catch(err => console.log(err));
 async function main() {
 await mongoose.connect(mongo_url);
 }
@@ -33,17 +31,26 @@ app.use(methodOverride("_method"));
 app.engine("ejs", ejsMate);
 app.use(express.static(path.join(__dirname,"/public")));//to use css files
 
+app.use(session({
+    secret: 'yourSecretKeyHere',
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false } 
+}));
+app.use(flash());
+
+app.use((req, res, next) => {
+    res.locals.success = req.flash("success");
+    res.locals.error = req.flash("error");
+    next();
+});
+
 app.get('/',(req,res)=>{
     res.send('Hi I am root');
 })
 
 // app.use(session(sessionOptions));
 // app.use(flash());
-
-app.use((req,res,next)=>{
-    res.locals.success = req.flash("success");
-    next();
-})
 
 app.use('/listing',listings);
 app.use('/',reviews);
@@ -53,9 +60,8 @@ app.all("*",(req,res,next) => {
 })
 
 app.use((err,req,res,next)=>{
-    let {statusCode=500, message= "something went wrong!"} = err;
-    // res.status(statusCode).send(message);
-    res.render("error.ejs",{ message });
+    const {statusCode=500, message= "something went wrong!"} = err;
+    res.status(statusCode).render("error.ejs",{ message, statusCode });
 })
 
 app.listen(8080,()=>{
