@@ -9,9 +9,11 @@ const wrapAsync = require("./utils/wrapAsync");
 const ExpressError = require("./utils/ExpressError");
 const {listingSchema, reviewSchema} = require("./schema.js");
 // const Review = require("./models/review.js");
-
+const flash = require("connect-flash");
+const session = require("express-session");
 const listings = require("./routes/listing.js");
 const reviews = require("./routes/review.js");
+const { clear } = require("console");
 
 const mongo_url = "mongodb://127.0.0.1:27017/wanderlust";
 
@@ -35,12 +37,19 @@ app.get('/',(req,res)=>{
     res.send('Hi I am root');
 })
 
+// app.use(session(sessionOptions));
+// app.use(flash());
+
+app.use((req,res,next)=>{
+    res.locals.success = req.flash("success");
+    next();
+})
 
 app.use('/listing',listings);
 app.use('/',reviews);
 
 app.all("*",(req,res,next) => {
-    next(new ExpressError(404, "Page not found!"))
+    next(new ExpressError(404, "Page not found!"));
 })
 
 app.use((err,req,res,next)=>{
