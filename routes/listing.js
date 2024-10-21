@@ -53,9 +53,9 @@ router.post('/',
 router.get('/:id/edit', wrapAsync(async (req,res)=>{
     let {id} = req.params;
     const listing = await Listing.findById(id);
-    if (error) {
-        let errMsg = error.details.map((el) => el.message).join(",");
-        throw new ExpressError(400, errMsg);
+    if(!listing){
+        req.flash("error", "Listing you are searching for does not exist!");
+        return res.redirect("/listing");
     }
     res.render("listings/edit.ejs", {listing});
 })

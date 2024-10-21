@@ -14,6 +14,9 @@ const session = require("express-session");
 const listings = require("./routes/listing.js");
 const reviews = require("./routes/review.js");
 const { clear } = require("console");
+const passport = require("passport");
+const LocalStrategy = require("passport-local");
+const User = require("./models/user.js");
 
 const mongo_url = "mongodb://127.0.0.1:27017/wanderlust";
 
@@ -31,6 +34,13 @@ app.use(methodOverride("_method"));
 app.engine("ejs", ejsMate);
 app.use(express.static(path.join(__dirname,"/public")));//to use css files
 
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new LocalStrategy(User.authenticate()));
+
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
 app.use(session({
     secret: 'yourSecretKeyHere',
     resave: false,
@@ -44,6 +54,15 @@ app.use((req, res, next) => {
     res.locals.error = req.flash("error");
     next();
 });
+
+app.get("/demouser",async(req,res)=>{
+    let fakeUser = new User({
+        email: "student12@gmail.com",
+        username: "student",
+    });
+    let registeredUser = await User.register(fakeUser, "helloWorld");
+    res.send(registeredUser);
+})
 
 app.get('/',(req,res)=>{
     res.send('Hi I am root');
