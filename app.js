@@ -11,8 +11,12 @@ const {listingSchema, reviewSchema} = require("./schema.js");
 // const Review = require("./models/review.js");
 const flash = require("connect-flash");
 const session = require("express-session");
-const listings = require("./routes/listing.js");
-const reviews = require("./routes/review.js");
+
+const listingsRouter = require("./routes/listing.js");
+const reviewsRouter = require("./routes/review.js");
+const userRouter = require("./routes/user.js");
+
+
 const { clear } = require("console");
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
@@ -34,6 +38,13 @@ app.use(methodOverride("_method"));
 app.engine("ejs", ejsMate);
 app.use(express.static(path.join(__dirname,"/public")));//to use css files
 
+app.use(session({
+    secret: 'yourSecretKeyHere',
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false } 
+}));
+
 app.use(passport.initialize());
 app.use(passport.session());
 passport.use(new LocalStrategy(User.authenticate()));
@@ -41,12 +52,6 @@ passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-app.use(session({
-    secret: 'yourSecretKeyHere',
-    resave: false,
-    saveUninitialized: true,
-    cookie: { secure: false } 
-}));
 app.use(flash());
 
 app.use((req, res, next) => {
@@ -55,14 +60,14 @@ app.use((req, res, next) => {
     next();
 });
 
-app.get("/demouser",async(req,res)=>{
-    let fakeUser = new User({
-        email: "student12@gmail.com",
-        username: "student",
-    });
-    let registeredUser = await User.register(fakeUser, "helloWorld");
-    res.send(registeredUser);
-})
+// app.get("/demouser",async(req,res)=>{
+//     let fakeUser = new User({
+//         email: "student12@gmail.com",
+//         username: "student",
+//     });
+//     let registeredUser = await User.register(fakeUser, "helloWorld");
+//     res.send(registeredUser);
+// })
 
 app.get('/',(req,res)=>{
     res.send('Hi I am root');
@@ -71,8 +76,9 @@ app.get('/',(req,res)=>{
 // app.use(session(sessionOptions));
 // app.use(flash());
 
-app.use('/listing',listings);
-app.use('/',reviews);
+app.use('/listing',listingsRouter);
+app.use('/',reviewsRouter);
+app.use('/',userRouter);
 
 app.all("*",(req,res,next) => {
     next(new ExpressError(404, "Page not found!"));
