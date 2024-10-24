@@ -4,6 +4,7 @@ const wrapAsync = require("../utils/wrapAsync");
 const ExpressError = require("../utils/ExpressError");
 const {listingSchema, reviewSchema} = require("../schema.js");
 const Listing = require("../models/listings");
+const {isLoggedIn} = require("../middleware.js");
 
 const validateListing = (req,res,next) => {
     let {error} = listingSchema.validate(req.body);
@@ -23,8 +24,8 @@ router.get('/',wrapAsync(async (req,res)=>{
 );
 
 //new route
-router.get('/new',(req,res)=>{
-    res.render('listings/new.ejs')
+router.get('/new',isLoggedIn,(req,res)=>{
+    res.render('listings/new.ejs');
 })
 
 //show route
@@ -33,14 +34,14 @@ router.get('/:id', wrapAsync(async (req,res)=>{
     const listing = await Listing.findById(id).populate("reviews");
     if(!listing){
         req.flash("error","listing you requested for does not exist!");
-        res.redirect("/listing");
+        return res.redirect("/listing");
     }
     res.render("listings/show.ejs",{listing});
 })
 );
 
 //create route
-router.post('/', 
+router.post('/', isLoggedIn,
     wrapAsync(async (req,res,next) =>{
         const newListing = new Listing(req.body.listing);
         await newListing.save();
@@ -50,7 +51,8 @@ router.post('/',
 )
 
 //edit route
-router.get('/:id/edit', wrapAsync(async (req,res)=>{
+router.get('/:id/edit',isLoggedIn,
+    wrapAsync(async (req,res)=>{
     let {id} = req.params;
     const listing = await Listing.findById(id);
     if(!listing){
@@ -62,7 +64,8 @@ router.get('/:id/edit', wrapAsync(async (req,res)=>{
 );
 
 //update route
-router.put("/:id",wrapAsync(async(req,res) =>{
+router.put("/:id",isLoggedIn,
+    wrapAsync(async(req,res) =>{
     if(!req.body.listing){
         throw new ExpressError(400, "send valid data for listing");
     }
@@ -74,7 +77,8 @@ router.put("/:id",wrapAsync(async(req,res) =>{
 );
 
 //DELETE ROUTE
-router.delete("/:id", wrapAsync(async(req,res) =>{
+router.delete("/:id",isLoggedIn,
+    wrapAsync(async(req,res) =>{
     let {id} = req.params;
     let deletedListing = await Listing.findByIdAndDelete(id);
     console.log(deletedListing);
