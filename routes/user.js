@@ -45,7 +45,7 @@ router.post(
 ),
     async (req, res) => {
         req.flash("success","Welcome to Wanderlust account!");
-        res.redirect(req.locals.RedirectUrl);
+        res.redirect(req.locals.redirectUrl);
     }
 );
 
