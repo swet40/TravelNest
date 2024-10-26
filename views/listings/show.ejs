@@ -8,6 +8,7 @@
     <div class="card-body">
     <p class="card-text">
         <b><%= listing.title %></b> <br>
+        <%= listing.owner%>
         <%= listing.description%> <br>
         <%if(listing.price){%>
             &#x20B9; <%= listing.price.toLocaleString("en-IN")%> <br>
