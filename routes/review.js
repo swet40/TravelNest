@@ -5,7 +5,7 @@ const ExpressError = require("../utils/ExpressError");
 const Listing = require("../models/listings");
 const Review = require("../models/review.js");
 const {listingSchema, reviewSchema} = require("../schema.js");
-const validateReview = require("../middleware.js");
+const {validateReview} = require("../middleware.js");
 
 //Reveiws
 //post review route
