@@ -28,7 +28,8 @@ router.route("/:id")
 .get(wrapAsync(listingController.showListing)
 )
 //update route
-.put(isLoggedIn,
+.put(
+    isLoggedIn,
     isOwner,
     upload.single('listing[image]'),
     validateListing,
