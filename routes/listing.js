@@ -44,7 +44,6 @@ router.route("/:id")
 //edit route
 router.get('/:id/edit',isLoggedIn,
     isOwner,
-    validateListing,
     wrapAsync(listingController.renderEditForm)
 );
 

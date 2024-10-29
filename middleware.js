@@ -31,7 +31,7 @@ module.exports.isOwner = async (req,res,next) =>{
 }
 
 module.exports.validateListing = (req,res,next) => {
-    let {error} = ListingSchema.validate(req.body.listing);
+    let {error} = ListingSchema.validate(req.body);
     if (error) {
         let errMsg = error.details.map((el) => el.message).join(",");
         throw new ExpressError(400, errMsg);

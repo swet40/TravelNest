@@ -23,8 +23,12 @@
                 <div class="invalid-feedback">Please enter a short decription</div>
             </div>
             <div class="mb-3">
+                Original Listing Image <br>
+                <img src="<%=listing.image.url %>">
+            </div>
+            <div class="mb-3">
                 <label for="image" class="form-label">Upload new Image</label>
-                <input type="file" name="listing.image" class="form-control">
+                <input type="file" name="listing[image]" class="form-control">
             </div>
             <div class="row">
                 <div class="mb-3 col md-8">
