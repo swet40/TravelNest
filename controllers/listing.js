@@ -1,6 +1,6 @@
 const Listing = require("../models/listings");
+const axios=require("axios");
 const opencage = require("opencage-api-client");
-require('dotenv').config();
 
 module.exports.index = async (req,res)=>{
     const allListings= await Listing.find({});
@@ -27,45 +27,30 @@ module.exports.showListing = async (req,res)=>{
     res.render("listings/show.ejs",{listing});
 }
 
-module.exports.createListing = async (req, res, next) => {
-    const opencage = require('opencage-api-client');
+module.exports.createListing = async (req,res,next) =>{
 
-    // Geocode the location
-    opencage
-        .geocode({ q: req.body.listing.location, key: process.env.OPENCAGE_API_KEY })
-        .then(async (data) => {
-            if (data.status.code === 200 && data.results.length > 0) {
-                const place = data.results[0];
-                const { lat, lng } = place.geometry;
-
-                // Save the listing with coordinates
-                const newListing = new Listing(req.body.listing);
-                newListing.owner = req.user._id;
-                newListing.image = { url: req.file.path, filename: req.file.filename };
-                newListing.coordinates = { lat, lng }; // Add coordinates to the listing
-                await newListing.save();
-
-                // Pass success message and coordinates back to client
-                req.flash("success", "New listing created");
-                res.redirect('/listing');
-            } else {
-                console.log('Status', data.status.message);
-                res.redirect('/listing');
-            }
-        })
-        .catch((error) => {
-            console.log('Error:', error.message);
-            res.redirect('/listing');
-        });
-
-        allListings.forEach(listing => {
-            if (listing.coordinates) {
-                L.marker([listing.coordinates.lat, listing.coordinates.lng]).addTo(map)
-                    .bindPopup(`<b>${listing.location}</b>`)
-                    .openPopup();
+    let response;
+    try {
+        response = await axios.get('https://nominatim.openstreetmap.org/search', {
+            params: {
+                q: req.body.listing.location,  // Location from user input
+                format: 'json',
+                limit: 1
             }
         });
-        
+    } catch (error) {
+        console.error('Error during geocoding:', error);
+        req.flash('error', 'Failed to geocode the location.');
+        return res.redirect('/listings/new');
+    }
+    
+    if (!response.data.length) {
+        req.flash('error', 'No geocoding results found.');
+        return res.redirect('/listings/new');
+    }
+
+    const geoData = response.data[0];
+    const coordinates = [parseFloat(geoData.lon), parseFloat(geoData.lat)];
 
 
     let url = req.file.path;
@@ -74,6 +59,10 @@ module.exports.createListing = async (req, res, next) => {
     const newListing = new Listing(req.body.listing);
     newListing.owner = req.user._id;
     newListing.image = {url,filename};
+    newListing.geometry = {
+        type: 'Point',
+        coordinates: coordinates
+    };
     await newListing.save();
     req.flash("success","new listing created");
     res.redirect('/listing');
