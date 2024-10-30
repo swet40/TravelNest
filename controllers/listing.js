@@ -1,4 +1,5 @@
 const Listing = require("../models/listings");
+const opencage = require("opencage-api-client");
 
 module.exports.index = async (req,res)=>{
     const allListings= await Listing.find({});
@@ -26,6 +27,45 @@ module.exports.showListing = async (req,res)=>{
 }
 
 module.exports.createListing = async (req,res,next) =>{
+    // note that the library takes care of URI encoding
+    const opencage = require('opencage-api-client');
+
+opencage
+    .geocode({ q: req.body.listing.location })
+    .then((data) => {
+        if (data.status.code === 200 && data.results.length > 0) {
+            const place = data.results[0];
+            const { lat, lng } = place.geometry;
+            console.log("Formatted Address:",place.formatted);
+            console.log("Latitude:", lat);
+            console.log("Longitude:", lng);
+            console.log("Timezone:",place.annotations.timezone.name);
+
+            map.setView([lat, lng], 12); // Adjust zoom level as needed
+
+                // Add a marker for the location
+                L.marker([lat, lng]).addTo(map)
+                    .bindPopup(`<b>${place.formatted}</b>`)
+                    .openPopup();
+                    
+        } else {
+            console.log('Status', data.status.message);
+            console.log('Total results:', data.total_results);
+        }
+    })
+    .catch((error) => {
+        console.log('Error:', error.message);
+        
+        // Check if `status` exists before accessing `status.code`
+        if (error.status && error.status.code === 402) {
+            console.log('Hit free trial daily limit');
+            console.log('Become a customer: https://opencagedata.com/pricing');
+        } else {
+            console.log('An unexpected error occurred.');
+        }
+    });
+
+
     let url = req.file.path;
     let filename = req.file.filename;
 
