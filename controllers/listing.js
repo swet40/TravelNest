@@ -1,5 +1,6 @@
 const Listing = require("../models/listings");
 const opencage = require("opencage-api-client");
+require('dotenv').config();
 
 module.exports.index = async (req,res)=>{
     const allListings= await Listing.find({});
@@ -26,44 +27,45 @@ module.exports.showListing = async (req,res)=>{
     res.render("listings/show.ejs",{listing});
 }
 
-module.exports.createListing = async (req,res,next) =>{
-    // note that the library takes care of URI encoding
+module.exports.createListing = async (req, res, next) => {
     const opencage = require('opencage-api-client');
 
-opencage
-    .geocode({ q: req.body.listing.location })
-    .then((data) => {
-        if (data.status.code === 200 && data.results.length > 0) {
-            const place = data.results[0];
-            const { lat, lng } = place.geometry;
-            console.log("Formatted Address:",place.formatted);
-            console.log("Latitude:", lat);
-            console.log("Longitude:", lng);
-            console.log("Timezone:",place.annotations.timezone.name);
+    // Geocode the location
+    opencage
+        .geocode({ q: req.body.listing.location, key: process.env.OPENCAGE_API_KEY })
+        .then(async (data) => {
+            if (data.status.code === 200 && data.results.length > 0) {
+                const place = data.results[0];
+                const { lat, lng } = place.geometry;
 
-            map.setView([lat, lng], 12); // Adjust zoom level as needed
+                // Save the listing with coordinates
+                const newListing = new Listing(req.body.listing);
+                newListing.owner = req.user._id;
+                newListing.image = { url: req.file.path, filename: req.file.filename };
+                newListing.coordinates = { lat, lng }; // Add coordinates to the listing
+                await newListing.save();
 
-                // Add a marker for the location
-                L.marker([lat, lng]).addTo(map)
-                    .bindPopup(`<b>${place.formatted}</b>`)
+                // Pass success message and coordinates back to client
+                req.flash("success", "New listing created");
+                res.redirect('/listing');
+            } else {
+                console.log('Status', data.status.message);
+                res.redirect('/listing');
+            }
+        })
+        .catch((error) => {
+            console.log('Error:', error.message);
+            res.redirect('/listing');
+        });
+
+        allListings.forEach(listing => {
+            if (listing.coordinates) {
+                L.marker([listing.coordinates.lat, listing.coordinates.lng]).addTo(map)
+                    .bindPopup(`<b>${listing.location}</b>`)
                     .openPopup();
-                    
-        } else {
-            console.log('Status', data.status.message);
-            console.log('Total results:', data.total_results);
-        }
-    })
-    .catch((error) => {
-        console.log('Error:', error.message);
+            }
+        });
         
-        // Check if `status` exists before accessing `status.code`
-        if (error.status && error.status.code === 402) {
-            console.log('Hit free trial daily limit');
-            console.log('Become a customer: https://opencagedata.com/pricing');
-        } else {
-            console.log('An unexpected error occurred.');
-        }
-    });
 
 
     let url = req.file.path;
