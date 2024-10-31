@@ -1,5 +1,9 @@
+if(coordinates.length==0){
+    coordinates=[77.2088,28.6139];
+}
+
 var map = L.map('map');
-        map.setView([12.972442, 77.580643], 13);
+        map.setView(coordinates, 13);
         console.log(coordinates)
         
         L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -13,8 +17,8 @@ var map = L.map('map');
 
         function success(pos){
 
-            const lat = pos.coords.latitude;
-            const lng = pos.coords.longitude;
+            const lat = coordinates[1];
+            const lng = coordinates[0];
             const accuracy = pos.coords.accuracy;
 
             if(marker){

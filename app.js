@@ -26,13 +26,14 @@ const passport = require("passport");
 const LocalStrategy = require("passport-local");
 const User = require("./models/user.js");
 
-const mongo_url = "mongodb://127.0.0.1:27017/wanderlust";
+// const mongo_url = "mongodb://127.0.0.1:27017/wanderlust";
+const dbUrl = process.env.ATLASDB_URL;
 
 main().then(()=>{
     console.log("connected to db");
 }).catch(err => console.log(err));
 async function main() {
-await mongoose.connect(mongo_url);
+await mongoose.connect(dbUrl);
 }
 
 app.set("view engine","ejs");

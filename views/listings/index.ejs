@@ -4,6 +4,7 @@
     #filters {
         display: flex;
         flex-wrap: wrap;
+        align-items: center;
     }
     .filter {
         text-align: center;
@@ -18,6 +19,24 @@
 
     .filter p{
         font-size: 0.8rem;
+    }
+
+    .tax-info{
+        display: none;
+    }
+
+    .tax-switch{
+        border: 1px solid black;
+        height: 3.15rem;
+        border-radius: 1rem;
+        padding: 1rem;
+        margin-left: 1.5rem;
+        display: flex;
+        align-items: center;
+        margin-top: 12px;
+    }
+    .tax-switch:hover {
+        border: 2px solid #fe424d;
     }
 </style>
 <div id="filters">
@@ -53,6 +72,32 @@
         <div><i class="fa-solid fa-person-swimming"></i></div>
         <p>Amazing Pools</p>
     </div>
+    <div class="filter">
+        <div><i class="fa-solid fa-igloo"></i></div>
+        <p>Dome</p>
+    </div>
+    <div class="filter">
+        <div><i class="fa-solid fa-sailboat"></i></div>
+        <p>Boating</p>
+    </div>
+    <div class="filter">
+        <div><i class="fa-brands fa-playstation"></i></div>
+        <p>Play</p>
+    </div>
+    <div class="filter">
+        <div><i class="fa-solid fa-key"></i></div>
+        <p>New</p>
+    </div>
+    <!-- <div class="filter">
+        <div><i class="fa-solid fa-border-none"></i></div>
+        <p>Off-the-grid</p>
+    </div> -->
+    <div class="tax-switch">
+        <div class="form-check-reverse form-switch">
+            <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault">
+            <label class="form-check-label" for="flexSwitchCheckDefault">Display total after taxes</label>
+        </div>
+    </div>
 </div>
 
 <div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1 mt-3">
@@ -67,6 +112,7 @@
                         &#x20B9;
                         <% if (listing.price) { %>
                             <%= listing.price.toLocaleString("en-IN") %> /night
+                            <i class="tax-info"> &nbsp;&nbsp;+18% GST</i>
                         <% } else { %>
                             Price not available
                         <% } %>
@@ -76,3 +122,18 @@
         </a>
     <% } %>
 </div>
+
+<script>
+    let taxSwitch = document.getElementById("flexSwitchCheckDefault");
+    taxSwitch.addEventListener("click", () =>{
+        let taxInfo = document.getElementsByClassName("tax-info");
+        for(info of taxInfo){
+            if(info.style.display != "inline"){
+                info.style.display = "inline";
+            } else{
+                info.style.display= "none";
+            }
+
+        }
+    })
+</script>
