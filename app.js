@@ -5,16 +5,16 @@ if(process.env.NODE_ENV != "production"){
 const express= require("express");
 const app = express();
 const mongoose= require("mongoose");
-// const Listing = require("./models/listings");
 const path = require("path");
 const methodOverride= require('method-override');
 const ejsMate = require('ejs-mate');
 const wrapAsync = require("./utils/wrapAsync");
 const ExpressError = require("./utils/ExpressError");
 const {listingSchema, reviewSchema} = require("./schema.js");
-// const Review = require("./models/review.js");
 const flash = require("connect-flash");
 const session = require("express-session");
+const MongoStore = require('connect-mongo');
+
 
 const listingsRouter = require("./routes/listing.js");
 const reviewsRouter = require("./routes/review.js");
@@ -26,7 +26,6 @@ const passport = require("passport");
 const LocalStrategy = require("passport-local");
 const User = require("./models/user.js");
 
-// const mongo_url = "mongodb://127.0.0.1:27017/wanderlust";
 const dbUrl = process.env.ATLASDB_URL;
 
 main().then(()=>{
@@ -43,12 +42,30 @@ app.use(methodOverride("_method"));
 app.engine("ejs", ejsMate);
 app.use(express.static(path.join(__dirname,"/public")));//to use css files
 
+const store = MongoStore.create({
+    mongoUrl: dbUrl,
+    crypto:{
+        secret: process.env.SECRET,
+    },
+    touchAfter: 24 * 3600,
+})
+
+store.on("error", ()=>{
+    console.log("error in mongo session store", err);
+})
+
 app.use(session({
-    secret: 'yourSecretKeyHere',
+    store,
+    secret: process.env.SECRET,
     resave: false,
     saveUninitialized: true,
-    cookie: { secure: false } 
+    cookie: {
+        expires: Date.now() + 7 * 24 * 60 * 60 * 1000,
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+        httpOnly: true,
+    } 
 }));
+
 
 app.use(passport.initialize());
 app.use(passport.session());

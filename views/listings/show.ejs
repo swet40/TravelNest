@@ -20,12 +20,12 @@
 </div>
 
 <% if(currUser && listing.owner._id.equals(currUser._id)) { %>
-<div class="btns offset-4">
+<div class="btns offset-0">
     <a 
-    href="/listing/<%= listing._id %>/edit" class="btn btn-dark col-0 offset-0 add-btn " style="margin-left: 0">Edit</a>
+    href="/listing/<%= listing._id %>/edit" class="btn btn-dark col-0 offset-0 add-btn mt-3">Edit</a>
 
         <form action="/listing/<%= listing._id%>?_method=DELETE" method="post">
-            <button class="btn btn-dark offset-2">Delete</button>
+            <button class="btn btn-dark offset-2 mt-3">Delete</button>
         </form>
     </div>
     <% } %>
