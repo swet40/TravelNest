@@ -1,1 +1,1 @@
-# AirBnb
+ AirBnb - executing core functionalities
