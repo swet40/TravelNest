@@ -1,3 +1,4 @@
 node_modules/
 cookies.js
 .env 
+.vercel
