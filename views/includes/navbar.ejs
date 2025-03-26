@@ -1,55 +1,116 @@
 <style>
-  .search-btn{
+  /* General Button Styling */
+.search-btnd {
     background-color: #fe424d;
     color: #fff;
     border-radius: 25px;
-    padding: 0 1rem 0 1rem;
-  }
-  .search-btn:hover {
+    padding: 0 1rem;
+}
+
+.search-btn:hover {
     background-color: #fe424d;
     color: #fff;
-  }
-  .search-btn i{
-    display: inline;
+}
+
+.search-btn i {
     margin-right: 0.5rem;
-  }
-  .search-inp{
+}
+
+/* Input Field */
+.search-inp {
     border-radius: 25px;
-    padding: 0.5rem 3rem 0.5rem 3rem;
+    padding: 0.5rem 3rem;
     font-size: 1rem;
-  }
+}
+
+.add{
+  border: 1px solid black;
+  border-radius: 15px;
+  padding: 5px;
+}
+
+/* Mobile-Only Styling */
+@media (max-width: 768px) {
+    .navbar-collapse {
+        text-align: center;
+    }
+
+    /* Ensure full width */
+    .d-flex {
+        width: 100%;
+        justify-content: center;
+    }
+
+    /* Make search container always visible */
+    .search-container {
+        display: flex;
+        justify-content: center;
+        margin-top: 10px;
+        padding: 0 15px;
+    }
+
+    .search-inp {
+        width: 10rem;
+        height: 2rem;
+        margin-top: 2px;
+        margin-bottom: 5px;
+        border: 1px solid #fe424d;
+    }
+
+    .search-btn {
+        width: 3rem;
+        color: #fe424d;
+    }
+}
+
 </style>
 
 <nav class="navbar navbar-expand-md bg-body-light border-bottom sticky-top">
-    <div class="container-fluid">
+  <div class="container-fluid">
       <a class="navbar-brand" href="/listing"><i class="fa-regular fa-compass"></i></a>
+
+      <!-- "Airbnb your home" beside the toggle button on mobile -->
+      <a class="add nav-link d-md-none" href="/listing/new">Add your home</a>
+
       <button 
-      class="navbar-toggler" 
-      type="button" 
-      data-bs-toggle="collapse" 
-      data-bs-target="#navbarNavAltMarkup"  >
-        <span class="navbar-toggler-icon"></span>
+        class="navbar-toggler" 
+        type="button" 
+        data-bs-toggle="collapse" 
+        data-bs-target="#navbarNavAltMarkup">
+          <span class="navbar-toggler-icon"></span>
       </button>
+
       <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-        <div class="navbar-nav">
-          <a class="nav-link" href="/listing">Explore</a>
-        </div>
-        <div class="navbar-nav ms-auto">
-          <form class="d-flex" role="search">
-            <input class="form-control me-2 search-inp" type="search" placeholder="Search destinations" >
-            <button class="btn search-btn" type="submit"><i class="fa-solid fa-magnifying-glass"></i>Search</button>
-          </form>
-        </div>
-        <div class="navbar-nav ms-auto">
-          <a class="nav-link" href="/listing/new">Airbnb your home</a>
-          <% if(!currUser){ %>
-          <a class="nav-link" href="/signup"><b>Sign Up</b></a>
-          <a class="nav-link" href="/login"><b>Log in</b></a>
-        <%} %>
-        <% if(currUser){ %>
-          <a class="nav-link" href="/logout">Log out</a>
-          <%} %>
-        </div>
+          <div class="navbar-nav">
+              <a class="nav-link" href="/listing">Explore</a>
+          </div>
+
+          <!-- Desktop: Search Bar inside Navbar -->
+          <div class="navbar-nav ms-auto d-none d-md-flex">
+              <form class="d-flex" role="search">
+                  <input class="form-control me-2 search-inp" type="search" placeholder="Search destinations">
+                  <button class="btn search-btnd" type="submit"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
+              </form>
+          </div>
+
+          <div class="navbar-nav ms-auto">
+              <a class="add nav-link d-none d-md-block" href="/listing/new">Add your home</a>
+              <% if (!currUser) { %>
+                  <a class="nav-link" href="/signup"><b>Sign Up</b></a>
+                  <a class="nav-link" href="/login"><b>Log in</b></a>
+              <% } %>
+              <% if (currUser) { %>
+                  <a class="nav-link" href="/logout">Log out</a>
+              <% } %>
+          </div>
       </div>
-    </div>
-  </nav>
+  </div>
+</nav>
+
+<!-- Mobile: Search bar outside navbar so it remains visible -->
+<div class="search-container d-md-none">
+  <form class="d-flex" role="search">
+      <input class="form-control search-inp" type="search" placeholder="Search destinations">
+      <button class="btn search-btn" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+  </form>
+</div>

@@ -12,6 +12,7 @@
         margin-top: 2rem;
         opacity: 0.7;
     }
+
     .filter:hover {
         opacity: 1;
         cursor: pointer;
@@ -38,6 +39,71 @@
     .tax-switch:hover {
         border: 2px solid #fe424d;
     }
+
+    @media (max-width: 768px) {
+        #filters-container {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+    }
+
+    #filters {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); /* Responsive grid */
+            padding: 5px;
+        }
+
+        .filter {
+            margin: 5px; 
+            padding: 1rem; 
+        }
+
+        .tax-switch{
+            display: flex;
+        border: 1px solid black;
+        height: 3rem;
+        width: 11.5rem;
+        border-radius: 1rem;
+        padding: 4px;
+        font-size: 0.8rem;
+        text-align: justify;
+        align-items: left;
+    }
+    .tax-switch:hover {
+        border: 2px solid #fe424d;
+    }
+
+    .search-container {
+    display: flex;
+    justify-content: center;
+    margin: 10px;
+    }
+
+    .search-inp {
+        flex: 1;
+        border-radius: 25px;
+        padding: 0.5rem 1rem;
+        font-size: 1rem;
+    }
+
+    .search-btn {
+        border-radius: 25px;
+        padding: 0.5rem 1rem;
+    }
+
+    /* Adjust navbar items for mobile */
+    .navbar-toggler {
+        display: flex;
+        align-items: center;
+    }
+
+    .navbar-toggler + .nav-link {
+        margin-left: 10px;
+    }
+
+}
+
+
 </style>
 <div id="filters">
     <div class="filter">
@@ -72,33 +138,16 @@
         <div><i class="fa-solid fa-person-swimming"></i></div>
         <p>Amazing Pools</p>
     </div>
-    <div class="filter">
-        <div><i class="fa-solid fa-igloo"></i></div>
-        <p>Dome</p>
-    </div>
-    <div class="filter">
-        <div><i class="fa-solid fa-sailboat"></i></div>
-        <p>Boating</p>
-    </div>
-    <div class="filter">
-        <div><i class="fa-brands fa-playstation"></i></div>
-        <p>Play</p>
-    </div>
-    <div class="filter">
-        <div><i class="fa-solid fa-key"></i></div>
-        <p>New</p>
-    </div>
-    <!-- <div class="filter">
-        <div><i class="fa-solid fa-border-none"></i></div>
-        <p>Off-the-grid</p>
-    </div> -->
+
     <div class="tax-switch">
         <div class="form-check-reverse form-switch">
             <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault">
             <label class="form-check-label" for="flexSwitchCheckDefault">Display total after taxes</label>
         </div>
     </div>
+
 </div>
+
 
 <div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1 mt-3">
     <% for (let listing of allListings) { %>
@@ -136,4 +185,15 @@
 
         }
     })
+
+    document.addEventListener("DOMContentLoaded", function() {
+    let taxSwitch = document.querySelector(".tax-switch");
+    let filtersContainer = document.querySelector("#filters-container");
+
+    if (window.innerWidth <= 768) {
+        filtersContainer.after(taxSwitch); // Move tax-switch below filters
+    }
+});
+
+
 </script>

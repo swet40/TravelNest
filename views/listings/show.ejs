@@ -1,4 +1,79 @@
 <% -layout("layouts/boilerplate") %>
+
+<style>
+    @media screen and (max-width: 768px) {
+    .row {
+        margin: 0;
+        padding: 0;
+    }
+
+    .show-card {
+        width: 90%;
+        margin: auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .show-img {
+        width: 100%;
+        height: auto;
+        object-fit: cover;
+    }
+
+    .card-body {
+        text-align: center;
+        padding: 15px;
+    }
+
+    .btns {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .btns a, .btns button {
+        width: 100%;
+    }
+
+    .col-8, .col-6, .col-5 {
+        width: 100% !important;
+        margin: 0 auto;
+    }
+
+    #map {
+        width: 100%;
+        height: 300px;
+        margin-top: 10px;
+    }
+
+    form {
+        width: 90%;
+        margin: auto;
+    }
+
+    textarea {
+        width: 100%;
+    }
+
+    .starability-slot {
+        display: flex;
+        justify-content: left;
+    }
+
+    .review-card {
+        width: 80%;
+        margin: 10px;
+        text-align: left;
+    }
+
+    .card p, .card h5 {
+        text-align: left;
+    }
+}
+
+</style>
 <script>
     let coordinates= <%- JSON.stringify(listing.geometry.coordinates)%>;
 </script>
@@ -71,7 +146,7 @@
     <div class="row">
         <p><b>All Reviews</b></p>
         <% for (review of listing.reviews) { %>
-            <div class="card col-5 ms-3 mb-3 pt-2">
+            <div class="review-card card col-5 ms-3 mb-3 pt-2">
                 <div class="card-body">
                     <h5 class="card-title">@<%= review.author.username %></h5>
                     <p class="starability-result card-text" data-rating= "<%= review.rating %>"></p>
